@@ -17,9 +17,15 @@ main{max-width:480px;margin:0 auto;padding:20px 16px 40px}
 .hero p{margin:0;color:var(--mute);font-size:14px}
 .big{font:700 64px/1.05 "Avenir Next",Avenir,system-ui,sans-serif;letter-spacing:-2px;margin:4px 0}
 .big.neg{color:var(--bad)}
-.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:14px 0 8px}
-.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
-.bar i.over{background:var(--bad)}
+.hero{text-align:center}
+.ring{position:relative;width:240px;height:240px;margin:14px auto 16px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:14}
+.ring .track{stroke:var(--line)}
+.ring .arc{stroke:var(--ok);stroke-linecap:round;stroke-dasharray:552.92;stroke-dashoffset:552.92;transition:stroke-dashoffset .5s,stroke .3s}
+.ring .arc.over{stroke:var(--bad)}
+.ring .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .big{font-size:44px;letter-spacing:-1.5px}
 .sub{display:flex;justify-content:space-between;color:var(--mute);font-size:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px}
 h2{font-size:16px;margin:0 0 10px}
@@ -44,9 +50,10 @@ li small{display:block;color:var(--mute)}
 <main>
   <section class="hero">
     <p id="weekLabel"></p>
-    <div class="big" id="left">$0</div>
-    <p id="leftNote">left this week</p>
-    <div class="bar"><i id="barFill"></i></div>
+    <div class="ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="track" cx="100" cy="100" r="88"/><circle class="arc" id="arc" cx="100" cy="100" r="88"/></svg>
+      <div class="mid"><div class="big" id="left">$0</div><p id="leftNote">left this week</p></div>
+    </div>
     <div class="sub"><span id="spentTxt"></span><span id="availTxt"></span></div>
   </section>
 
@@ -121,7 +128,7 @@ li small{display:block;color:var(--mute)}
     var big=$("left");big.textContent=money(left);big.className="big"+(left<0?" neg":"");
     $("leftNote").textContent=left<0?"over budget this week":"left this week";
     var pct=avail>0?Math.min(100,Math.max(0,spent/avail*100)):100;
-    var fill=$("barFill");fill.style.width=pct+"%";fill.className=left<0?"over":"";
+    var arc=$("arc");arc.style.strokeDashoffset=(552.92*(1-pct/100)).toFixed(2);arc.setAttribute("class","arc"+(left<0?" over":""));
     $("spentTxt").textContent=money(spent)+" spent";
     $("availTxt").textContent=money(avail)+" available"+(carry?" ("+(carry>0?"+":"")+money(carry)+" carried)":"");
 
